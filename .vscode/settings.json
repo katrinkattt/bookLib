@@ -1,0 +1,29 @@
+// {
+//   "editor.formatOnSave": true,
+//   "editor.formatOnPaste": true,
+//   "editor.defaultFormatter": "esbenp.prettier-vscode",
+// }
+{
+    "javascript.validate.enable": false,
+    "editor.formatOnSaveMode": "modifications",
+    "files.trimTrailingWhitespace": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "files.exclude": {
+        "**/node_modules": true,
+        "nls.*.json": true,
+        "**/*.js": {
+            "when": "$(basename).ts"
+        },
+        "**/*.js.map": true
+    },
+    "[typescript]": {
+        // Need to install extension 'esbenp.prettier-vscode'
+        //"editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "typescript.tsdk": "./node_modules/typescript/lib",
+    "eslint.debug": false,
+    "eslint.format.enable": true,
+    "eslint.enable": false
+}
