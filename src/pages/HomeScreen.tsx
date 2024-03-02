@@ -6,49 +6,61 @@ import {
   View,
   Text,
   StatusBar,
-  TouchableOpacity,
 } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { RoutesNames } from '../navigation/RouteNames';
 import { Book } from '~/store/types';
 import { BookCard } from '../components/BookCard';
+import CustomButton from '../components/CustomButton';
+import { StyleConst } from '../StyleConst';
+import { useAppDispatch } from '../hooks/redux';
+import { loadBooks } from '../store/actions';
+import { useSelector } from 'react-redux';
+import { getBooks } from '../store/selectors';
 
 
 export const HomeScreen = () => {
-  const scrollViewRef = useRef<null | ScrollView>(null);
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
+  const { books } = useSelector(getBooks);
 
-  const testBook: Book = {
-    id: '13r3d',
-    title: 'qererevrvewf wee',
-    description: 'This is very interesting book about adventiry in other world',
-    file: '',
-  };
-  const [books, setBooks] = useState<Book[]>([]);
-
-  const getBooks = useCallback(async () => {
-    const resp = await axios.get<Book[]>('http://localhost:3333/api');
-    setBooks(resp.data);
-  }, []);
+  const scrollViewRef = useRef<null | ScrollView>(null);
+  const [bookArr, setBookArr] = useState<Book[]>([]);
 
   useEffect(() => {
-    getBooks();
-  }, [getBooks]);
+    dataLoad();
+  }, []);
 
+  const dataLoad = () => {
+    dispatch(loadBooks({
+      onSuccess: () => {
+        console.log('GOOD');
+        setBookArr(books)
+      },
+      onError: async (e) => {
+        console.log(e, 'ERR');
+      },
+    }))
+  }
+  // ИЛИ ТАК
+  // const getBooks = useCallback(async () => {
+  //   const resp = await axios.get<Book[]>('http://localhost:3333/api');
+  //   setBook(resp.data);
+  // }, []);
 
-  console.log(books, 'BOOOKS');
 
   return (
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
           ref={ref => {
             scrollViewRef.current = ref;
           }}
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
+          style={styles.scrollView}
+        >
           <View style={styles.section}>
             <Text style={styles.textLg}>Welcome library</Text>
             <Text
@@ -58,20 +70,29 @@ export const HomeScreen = () => {
               More Books 📖
             </Text>
             <View style={styles.addContainer}>
-              <View style={{ justifyContent: 'center' }}>
+              <View style={{ justifyContent: 'center', flexGrow: 0.6, }}>
                 <Text style={[styles.textLg, { color: '#fafafa' }]}>
                   Replenish the library
                 </Text>
               </View>
-
-              <TouchableOpacity
-                style={styles.whatsNextButton}
-                //@ts-ignore
-                onPress={() => navigation.navigate(RoutesNames.BOOK_DETAILS)}>
-                <Text style={[styles.textMd, styles.textCenter]}>Add book</Text>
-              </TouchableOpacity>
+              <View style={{ flexGrow: 0.4, }}>
+                <CustomButton
+                  text='Add book'
+                  color='#ffffff'
+                  textColor={StyleConst.AccentColor}
+              //@ts-ignore
+                  func={() => navigation.navigate(RoutesNames.ADD_BOOK)}
+                />
+              </View>
             </View>
-            <BookCard book={testBook} />
+            {bookArr.length > 1 ? books.map(book => (
+              <BookCard key={book?.id} book={book} />
+            )) : (
+              <View style={styles.container}>
+                <Text style={styles.textLg}>not found</Text>
+              </View>
+
+            )}
           </View>
         </ScrollView>
       </SafeAreaView >
@@ -82,34 +103,10 @@ const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: '#ffffff',
   },
-  monospace: {
-    color: '#ffffff',
-    fontFamily: 'Courier New',
-    marginVertical: 4,
-  },
-  comment: {
-    color: '#cccccc',
-  },
-  marginBottomMd: {
-    marginBottom: 18,
-  },
-  marginBottomLg: {
-    marginBottom: 24,
-  },
-  textLight: {
-    fontWeight: '300',
-  },
-  textCenter: {
-    textAlign: 'center',
-  },
-  textXS: {
-    fontSize: 14,
-  },
-  textSm: {
-    fontSize: 16,
-  },
-  textMd: {
-    fontSize: 18,
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
   },
   textLg: {
     fontSize: 22,
@@ -124,28 +121,6 @@ const styles = StyleSheet.create({
     marginVertical: 24,
     marginHorizontal: 12,
   },
-  shadowBox: {
-    backgroundColor: 'white',
-    borderRadius: 24,
-    shadowColor: 'black',
-    shadowOpacity: 0.15,
-    shadowOffset: {
-      width: 1,
-      height: 4,
-    },
-    shadowRadius: 12,
-    padding: 24,
-    marginBottom: 24,
-  },
-  listItem: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  listItemTextContainer: {
-    marginLeft: 12,
-    flex: 1,
-  },
   appTitleText: {
     paddingTop: 12,
     fontWeight: '500',
@@ -157,12 +132,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  whatsNextButton: {
-    backgroundColor: '#ffffff',
-    paddingVertical: 16,
-    borderRadius: 8,
-    width: 150,
+    flexGrow: 1,
   },
 });
 

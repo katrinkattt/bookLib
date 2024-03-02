@@ -1,14 +1,13 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-// import { View, Text, Button } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RoutesNames } from "./RouteNames";
 import { BookDetailScreen } from "../pages/BookDetailsScreen";
 import { AddBookScreen } from "../pages/AddBookScreen";
 import { HomeScreen } from "../pages/HomeScreen";
+import { EditBookScreen } from "../pages/EditBookSreen";
 import { IconAdd, IconBooks } from "../components/Icons";
 import { StyleConst } from "../StyleConst";
-
 
 const Tab = createBottomTabNavigator();
 
@@ -17,8 +16,9 @@ const HomeStack = createNativeStackNavigator();
 function HomeStackScreen() {
   return (
     <HomeStack.Navigator>
-      <HomeStack.Screen name={RoutesNames.HOME} component={HomeScreen} />
+      <HomeStack.Screen name={RoutesNames.LIB} component={HomeScreen} />
       <HomeStack.Screen name={RoutesNames.BOOK_DETAILS} component={BookDetailScreen} />
+      <HomeStack.Screen name={RoutesNames.EDIT} component={EditBookScreen} />
     </HomeStack.Navigator>
   );
 }

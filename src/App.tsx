@@ -5,10 +5,10 @@ import {
   useColorScheme,
   View
 } from 'react-native';
-
-import {
-  Colors,
-} from 'react-native/Libraries/NewAppScreen';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from './store';
 import { Navigator } from './navigation';
 
 
@@ -21,11 +21,15 @@ function App(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <Navigator />
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <StatusBar
+            barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+            backgroundColor={backgroundStyle.backgroundColor}
+          />
+          <Navigator />
+        </PersistGate>
+      </Provider>
     </View>
 
   );
