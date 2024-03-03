@@ -21,7 +21,6 @@ const CustomInput = (
     style={[styles.input, style]}
     value={value}
     onChangeText={onChangeText}
-    numberOfLines={1}
   />
 )
 export default memo(CustomInput);

@@ -10,9 +10,14 @@ export const BookCard = ({ book }: { book: Book }) => {
   const [fullCard, setFullCard] = useState<boolean>(false);
 
   return (
-    <TouchableOpacity onPress={() => setFullCard(!fullCard)} style={styles.shadowBox}>
-    <Text style={[styles.textLg, styles.marginBottomMd]}>{book.title}</Text>
-    <Text style={[styles.marginBottomMd, styles.textSm]}>
+    <TouchableOpacity
+      onPress={() => setFullCard(!fullCard)}
+      style={styles.shadowBox}
+    >
+      <Text numberOfLines={1} style={[styles.textLg, styles.marginBottomMd]}>
+        {book.title}
+      </Text>
+      <Text numberOfLines={2} style={[styles.marginBottomMd, styles.textSm]}>
       {book.description}
     </Text>
       {fullCard && (
@@ -32,7 +37,8 @@ export const BookCard = ({ book }: { book: Book }) => {
             <CustomButton
               text='Read'
               //@ts-ignore
-              func={navigation.navigate(RoutesNames.BOOK_DETAILS, { item: book })} />
+              func={() => navigation.navigate(RoutesNames.BOOK_DETAILS, { item: book })}
+            />
           </View>
 
 

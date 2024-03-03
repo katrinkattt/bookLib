@@ -6,6 +6,7 @@ import {
   View,
   Text,
   StatusBar,
+  RefreshControl,
 } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
@@ -24,9 +25,10 @@ export const HomeScreen = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const { books } = useSelector(getBooks);
+  console.log(books, 'BOOKS');
 
   const scrollViewRef = useRef<null | ScrollView>(null);
-  const [bookArr, setBookArr] = useState<Book[]>([]);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   useEffect(() => {
     dataLoad();
@@ -35,11 +37,11 @@ export const HomeScreen = () => {
   const dataLoad = () => {
     dispatch(loadBooks({
       onSuccess: () => {
-        console.log('GOOD');
-        setBookArr(books)
+        setRefreshing(false);
       },
       onError: async (e) => {
         console.log(e, 'ERR');
+        setRefreshing(false);
       },
     }))
   }
@@ -48,6 +50,11 @@ export const HomeScreen = () => {
   //   const resp = await axios.get<Book[]>('http://localhost:3333/api');
   //   setBook(resp.data);
   // }, []);
+  const onRefresh = useCallback(() => {
+    console.log('refresh');
+    setRefreshing(true);
+    dataLoad();
+  }, []);
 
 
   return (
@@ -55,6 +62,9 @@ export const HomeScreen = () => {
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           contentInsetAdjustmentBehavior="automatic"
           ref={ref => {
             scrollViewRef.current = ref;
@@ -85,7 +95,7 @@ export const HomeScreen = () => {
                 />
               </View>
             </View>
-            {bookArr.length > 1 ? books.map(book => (
+            {books.length > 0 ? books.map(book => (
               <BookCard key={book?.id} book={book} />
             )) : (
               <View style={styles.container}>

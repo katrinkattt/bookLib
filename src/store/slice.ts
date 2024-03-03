@@ -3,7 +3,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Book, Books } from "./types";
 import { PersistConfig, persistReducer } from "redux-persist";
 import AsyncStorage from "@react-native-community/async-storage";
-import { bookEdit, loadBooks } from "./actions";
+import { bookEdit, bookAdd, loadBooks } from "./actions";
 
 export const initialStateBooks: Books = {
   books: [],
@@ -49,6 +49,22 @@ const booksSlice = createSlice({
         state.loading = false;
         console.log('REJECTEDDDD')
       });
+
+    builder.addCase(
+      bookAdd.fulfilled.type,
+      (state, action: PayloadAction<Book>) => {
+        state.loading = false;
+        console.log('ACTION PAYLOAD', action.payload);
+      }
+    ), builder.addCase(bookAdd.pending.type, state => {
+      state.loading = true;
+      console.log('PENDINGGGGG')
+    }),
+      builder.addCase(bookAdd.rejected.type, state => {
+        state.loading = false;
+        console.log('REJECTEDDDD')
+      });
+
   }
 });
 const persistConfig: PersistConfig<Books> = {
